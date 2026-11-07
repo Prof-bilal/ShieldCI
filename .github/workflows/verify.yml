@@ -55,4 +55,4 @@ jobs:
         working-directory: engine/warden/warden-starter/warden
         run: go build -buildvcs=false -o /tmp/warden ./cmd/warden
       - name: Prove allow and deny behavior
-        run: bash ./scripts/warden-proof.sh /tmp/warden
+        run: sudo -E bash ./scripts/warden-proof.sh /tmp/warden
