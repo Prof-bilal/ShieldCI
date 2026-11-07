@@ -13,6 +13,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - name: Checkout pinned Warden base
+        uses: actions/checkout@v4
+        with:
+          repository: Prof-bilal/Warden
+          ref: 65680c37cb69019a5ee46d8eb7d8bb2102d3d994
+          path: engine/warden
       - uses: actions/setup-go@v5
         with:
           go-version: '1.24'
@@ -31,6 +37,12 @@ jobs:
       contents: read
     steps:
       - uses: actions/checkout@v4
+      - name: Checkout pinned Warden base
+        uses: actions/checkout@v4
+        with:
+          repository: Prof-bilal/Warden
+          ref: 65680c37cb69019a5ee46d8eb7d8bb2102d3d994
+          path: engine/warden
       - uses: actions/setup-go@v5
         with:
           go-version: '1.24'
