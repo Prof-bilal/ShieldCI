@@ -1,0 +1,7 @@
+filesystem:
+  read:
+    - /bin
+network:
+  allow: []
+env:
+  allow: []
