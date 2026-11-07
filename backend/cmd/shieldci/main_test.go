@@ -50,6 +50,11 @@ func TestCreatePolicyAndQueueJob(t *testing.T) {
 	if jobResponse.Code != http.StatusAccepted || !strings.Contains(jobResponse.Body.String(), `"status":"queued"`) {
 		t.Fatalf("unexpected job response: %d %s", jobResponse.Code, jobResponse.Body.String())
 	}
+	listResponse := httptest.NewRecorder()
+	mux.ServeHTTP(listResponse, httptest.NewRequest(http.MethodGet, "/api/v1/policies", nil))
+	if listResponse.Code != http.StatusOK || !strings.Contains(listResponse.Body.String(), `"name":"fixture"`) {
+		t.Fatalf("unexpected policy list: %d %s", listResponse.Code, listResponse.Body.String())
+	}
 }
 
 func TestSecretScanStoresRedactedFinding(t *testing.T) {
