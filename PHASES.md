@@ -75,7 +75,7 @@ Current progress: `internal/scanner` scans bounded source files, skips generated
 
 ## Phase 5 — dashboard MVP
 
-Status: in progress — dashboard shell, live jobs/policies API wiring, and local API auth seam are implemented; live findings/audit screens and hosted auth integration remain.
+Status: in progress — dashboard shell, live jobs/policies/findings/audit API wiring, and local API auth seam are implemented; hosted auth integration and production operations remain.
 
 Deliverables:
 
@@ -86,7 +86,7 @@ Deliverables:
 
 Gate: a user can submit or inspect a job, understand why it passed or was blocked, inspect a policy, and trace a finding back to an audit event.
 
-Current progress: `landing/pages/dashboard.js` provides the first dark control-plane surface with workspace navigation, run status, policy events, coverage, and responsive narrow-viewport behavior. Dedicated `/dashboard/jobs`, `/dashboard/policies`, `/dashboard/findings`, and `/dashboard/audit` routes now exist. When `NEXT_PUBLIC_SHIELDCI_API` is set the overview loads live jobs and the policies screen loads live policies, with representative fixtures as safe empty/error states. The backend has an optional bearer-token boundary via `SHIELDCI_API_TOKEN`.
+Current progress: `landing/pages/dashboard.js` provides the first dark control-plane surface with workspace navigation, run status, policy events, coverage, and responsive narrow-viewport behavior. Dedicated `/dashboard/jobs`, `/dashboard/policies`, `/dashboard/findings`, and `/dashboard/audit` routes now exist. When `NEXT_PUBLIC_SHIELDCI_API` is set the dashboard screens load live jobs, policies, findings, and audit events, with representative fixtures as safe empty/error states. The backend has an optional bearer-token boundary via `SHIELDCI_API_TOKEN`.
 
 ## Phase 6 — reliability, security, and release
 
