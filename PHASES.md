@@ -90,7 +90,7 @@ Current progress: `landing/pages/dashboard.js` provides the first dark control-p
 
 ## Phase 6 — reliability, security, and release
 
-Status: in progress — the reproducible `make verify` gate passes locally; hosted CI and a manual Warden proof workflow are defined, pending their first remote run. The local proof reaches Warden but the sandbox egress proxy cannot create a Unix socket in this restricted environment.
+Status: in progress — local and hosted verification gates pass. Manual hosted Warden proof run `42377771069` verified allowed execution and blocked undeclared filesystem access; the local container still cannot create the required egress-proxy Unix socket.
 
 Deliverables:
 
