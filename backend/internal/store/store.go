@@ -49,6 +49,7 @@ type Finding struct {
 type Store interface {
 	CreatePolicy(policy.Policy) (PolicyRecord, error)
 	GetPolicy(string) (PolicyRecord, error)
+	ListPolicies() []PolicyRecord
 	CreateJob(string, []string) (Job, error)
 	ClaimNextQueued() (Job, error)
 	GetJob(string) (Job, error)
@@ -98,6 +99,16 @@ func (m *Memory) GetPolicy(id string) (PolicyRecord, error) {
 		return PolicyRecord{}, ErrNotFound
 	}
 	return record, nil
+}
+
+func (m *Memory) ListPolicies() []PolicyRecord {
+	m.mu.RLock()
+	defer m.mu.RUnlock()
+	policies := make([]PolicyRecord, 0, len(m.policies))
+	for _, record := range m.policies {
+		policies = append(policies, record)
+	}
+	return policies
 }
 
 func (m *Memory) CreateJob(policyID string, command []string) (Job, error) {
