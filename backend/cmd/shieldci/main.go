@@ -67,6 +67,10 @@ func (s server) policies(w http.ResponseWriter, r *http.Request) {
 		s.createPolicy(w, r)
 		return
 	}
+	if r.Method == http.MethodGet && r.URL.Path == "/api/v1/policies" {
+		writeJSON(w, http.StatusOK, map[string]any{"policies": s.store.ListPolicies()})
+		return
+	}
 	id := strings.TrimPrefix(r.URL.Path, "/api/v1/policies/")
 	if r.Method != http.MethodGet || id == "" || strings.Contains(id, "/") {
 		writeError(w, http.StatusMethodNotAllowed, "method_not_allowed", "use GET for a policy id")
