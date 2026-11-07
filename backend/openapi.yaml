@@ -15,6 +15,10 @@ paths:
         '200':
           description: Service is healthy.
   /api/v1/policies:
+    get:
+      summary: List policies
+      responses:
+        '200': { description: Policy records. }
     post:
       summary: Create a policy
       requestBody:
