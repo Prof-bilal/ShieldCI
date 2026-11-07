@@ -10,6 +10,15 @@ landing/.env*
 landing/coverage/
 landing/*.tsbuildinfo
 
+# Local ShieldCI runtime data
+backend/.shieldci/
+backend/*.db
+backend/shieldci
+
+# Warden build output
+engine/warden/warden-starter/warden/warden
+engine/warden/warden-starter/warden/dist/
+
 # OS files
 .DS_Store
 *.swp
