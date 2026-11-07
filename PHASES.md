@@ -47,7 +47,7 @@ Current progress: the API now supports policy creation and lookup, queued job su
 
 ## Phase 3 — job runner and GitHub Actions integration
 
-Status: in progress — local queued-job worker, atomic job claiming, GitHub composite Action, and API-to-runner integration coverage are implemented; hosted integration tests are next.
+Status: in progress — local queued-job worker, atomic job claiming, GitHub composite Action, API-to-runner integration coverage, and hosted verification are implemented; production runner operations remain.
 
 Deliverables:
 
@@ -57,7 +57,7 @@ Deliverables:
 
 Gate: a fixture workflow runs a safe command successfully and a policy violation fails safely with a recorded reason.
 
-Current progress: `internal/runner` atomically claims one queued job, invokes the Warden adapter, records adapter audit events, and finishes it as passed, failed, or blocked. Memory and SQLite stores both exercise the claim transition; concurrent memory claims prove only one worker receives a job. `cmd/shieldci/e2e_test.go` covers policy creation → job submission → worker execution → status and audit retrieval. The control-plane process starts this worker only when `SHIELDCI_WARDEN_BIN` is explicitly configured; otherwise jobs remain queued rather than running outside the sandbox. `cicd-security/actions/shieldci/action.yml` submits a policy, queues a job, polls its status, and fails the workflow for blocked or failed jobs.
+Current progress: `internal/runner` atomically claims one queued job, invokes the Warden adapter, records adapter audit events, and finishes it as passed, failed, or blocked. Memory and SQLite stores both exercise the claim transition; concurrent memory claims prove only one worker receives a job. `cmd/shieldci/e2e_test.go` covers policy creation → job submission → worker execution → status and audit retrieval. The control-plane process starts this worker only when `SHIELDCI_WARDEN_BIN` is explicitly configured; otherwise jobs remain queued rather than running outside the sandbox. `cicd-security/actions/shieldci/action.yml` submits a policy, queues a job, polls its status, and fails the workflow for blocked or failed jobs. Hosted run `42378386582` passed the full verification workflow.
 
 ## Phase 4 — scanning and security evidence
 
@@ -75,7 +75,7 @@ Current progress: `internal/scanner` scans bounded source files, skips generated
 
 ## Phase 5 — dashboard MVP
 
-Status: in progress — dashboard shell, API job wiring, and local API auth seam are implemented; stateful policy/finding screens are next.
+Status: in progress — dashboard shell, live jobs/policies API wiring, and local API auth seam are implemented; live findings/audit screens and hosted auth integration remain.
 
 Deliverables:
 
@@ -86,7 +86,7 @@ Deliverables:
 
 Gate: a user can submit or inspect a job, understand why it passed or was blocked, inspect a policy, and trace a finding back to an audit event.
 
-Current progress: `landing/pages/dashboard.js` provides the first dark control-plane surface with workspace navigation, run status, policy events, coverage, and responsive narrow-viewport behavior. Dedicated `/dashboard/jobs`, `/dashboard/policies`, `/dashboard/findings`, and `/dashboard/audit` routes now exist. When `NEXT_PUBLIC_SHIELDCI_API` is set the overview loads live jobs, with representative fixtures as a safe empty/error state. The backend has an optional bearer-token boundary via `SHIELDCI_API_TOKEN`.
+Current progress: `landing/pages/dashboard.js` provides the first dark control-plane surface with workspace navigation, run status, policy events, coverage, and responsive narrow-viewport behavior. Dedicated `/dashboard/jobs`, `/dashboard/policies`, `/dashboard/findings`, and `/dashboard/audit` routes now exist. When `NEXT_PUBLIC_SHIELDCI_API` is set the overview loads live jobs and the policies screen loads live policies, with representative fixtures as safe empty/error states. The backend has an optional bearer-token boundary via `SHIELDCI_API_TOKEN`.
 
 ## Phase 6 — reliability, security, and release
 
