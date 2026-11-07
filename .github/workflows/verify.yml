@@ -49,6 +49,8 @@ jobs:
       - uses: actions/setup-go@v5
         with:
           go-version: '1.24'
+      - name: Install Linux sandbox backend
+        run: sudo apt-get update && sudo apt-get install --yes bubblewrap
       - name: Build pinned Warden
         working-directory: engine/warden/warden-starter/warden
         run: go build -buildvcs=false -o /tmp/warden ./cmd/warden
