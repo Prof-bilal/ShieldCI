@@ -46,3 +46,5 @@ make verify
 This runs backend unit, race, vet, and build checks; focused Warden policy/sandbox tests and build; and the dashboard production build.
 
 The hosted workflow in `.github/workflows/verify.yml` also exposes a manual `warden-proof` job for real allow/deny sandbox verification. The local container may reject that proof because Warden needs to create an egress-proxy Unix socket.
+
+The hosted proof has passed on GitHub Actions (run `42377771069`), including the Warden Linux backend and allow/deny filesystem checks.
