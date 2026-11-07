@@ -79,6 +79,26 @@ func (s *SQLiteCLI) GetPolicy(id string) (PolicyRecord, error) {
 	return PolicyRecord{ID: rows[0].ID, Policy: p, CreatedAt: created}, nil
 }
 
+func (s *SQLiteCLI) ListPolicies() []PolicyRecord {
+	var rows []struct {
+		ID        string `json:"id"`
+		Policy    string `json:"policy_json"`
+		CreatedAt string `json:"created_at"`
+	}
+	if err := s.query("SELECT id, policy_json, created_at FROM policies ORDER BY created_at DESC;", &rows); err != nil {
+		return []PolicyRecord{}
+	}
+	policies := make([]PolicyRecord, 0, len(rows))
+	for _, row := range rows {
+		var p policy.Policy
+		created, createdErr := time.Parse(time.RFC3339Nano, row.CreatedAt)
+		if json.Unmarshal([]byte(row.Policy), &p) == nil && createdErr == nil {
+			policies = append(policies, PolicyRecord{ID: row.ID, Policy: p, CreatedAt: created})
+		}
+	}
+	return policies
+}
+
 func (s *SQLiteCLI) CreateJob(policyID string, command []string) (Job, error) {
 	if _, err := s.GetPolicy(policyID); err != nil {
 		return Job{}, err
