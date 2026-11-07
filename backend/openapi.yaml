@@ -1,0 +1,160 @@
+openapi: 3.0.3
+info:
+  title: ShieldCI Control Plane API
+  version: 0.1.0
+  description: Policy, job, audit, and security-evidence API for the ShieldCI MVP.
+servers:
+  - url: http://localhost:8080
+security:
+  - bearerAuth: []
+paths:
+  /healthz:
+    get:
+      security: []
+      responses:
+        '200':
+          description: Service is healthy.
+  /api/v1/policies:
+    post:
+      summary: Create a policy
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/Policy' }
+      responses:
+        '201':
+          description: Policy created.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/PolicyRecord' }
+        '422': { $ref: '#/components/responses/InvalidPolicy' }
+  /api/v1/policies/{policyId}:
+    get:
+      summary: Get a policy
+      parameters:
+        - { $ref: '#/components/parameters/PolicyId' }
+      responses:
+        '200':
+          description: Policy record.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/PolicyRecord' }
+        '404': { $ref: '#/components/responses/NotFound' }
+  /api/v1/jobs:
+    post:
+      summary: Queue a Warden-backed job
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [policy_id, command]
+              properties:
+                policy_id: { type: string }
+                command: { type: array, items: { type: string }, minItems: 1 }
+      responses:
+        '202':
+          description: Job queued.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Job' }
+    get:
+      summary: List jobs
+      responses:
+        '200':
+          description: Jobs ordered by creation time.
+  /api/v1/jobs/{jobId}:
+    get:
+      summary: Get job status
+      parameters:
+        - { $ref: '#/components/parameters/JobId' }
+      responses:
+        '200':
+          description: Job status.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Job' }
+        '404': { $ref: '#/components/responses/NotFound' }
+  /api/v1/jobs/{jobId}/audit:
+    get:
+      summary: Get job audit events
+      parameters:
+        - { $ref: '#/components/parameters/JobId' }
+      responses:
+        '200': { description: Audit events for the job. }
+  /api/v1/jobs/{jobId}/findings:
+    get:
+      summary: Get findings linked to a job
+      parameters:
+        - { $ref: '#/components/parameters/JobId' }
+      responses:
+        '200': { description: Findings for the job. }
+  /api/v1/findings:
+    get:
+      summary: List findings
+      parameters:
+        - in: query
+          name: job_id
+          schema: { type: string }
+      responses:
+        '200': { description: Security findings. }
+  /api/v1/scans/secrets:
+    post:
+      summary: Run the redacted secrets scanner
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                root: { type: string, description: Local source root to scan. }
+                job_id: { type: string, description: Optional job to link findings to. }
+      responses:
+        '201': { description: Scan completed and findings persisted. }
+components:
+  securitySchemes:
+    bearerAuth: { type: http, scheme: bearer }
+  parameters:
+    PolicyId: { in: path, name: policyId, required: true, schema: { type: string } }
+    JobId: { in: path, name: jobId, required: true, schema: { type: string } }
+  responses:
+    NotFound:
+      description: Resource was not found.
+    InvalidPolicy:
+      description: Policy failed validation.
+  schemas:
+    Policy:
+      type: object
+      required: [version, name]
+      properties:
+        version: { type: string }
+        name: { type: string }
+        filesystem:
+          type: object
+          properties:
+            read: { type: array, items: { type: string } }
+            write: { type: array, items: { type: string } }
+        network:
+          type: object
+          properties: { allow: { type: array, items: { type: string } } }
+        environment:
+          type: object
+          properties: { allow: { type: array, items: { type: string } } }
+    PolicyRecord:
+      type: object
+      properties:
+        id: { type: string }
+        policy: { $ref: '#/components/schemas/Policy' }
+        created_at: { type: string, format: date-time }
+    Job:
+      type: object
+      properties:
+        id: { type: string }
+        policy_id: { type: string }
+        command: { type: array, items: { type: string } }
+        status: { type: string, enum: [queued, running, passed, failed, blocked, cancelled] }
+        created_at: { type: string, format: date-time }
+        updated_at: { type: string, format: date-time }
